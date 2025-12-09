@@ -1,0 +1,55 @@
+.custom-button {
+    -fx-background-color: white;
+        background-color: white;
+    -fx-background-radius: 2.5px 2.5px 5px 5px;
+    -fx-border-width: 1px 0px 2px 0px;
+        border-width: 1px 0px 2px 0px;
+    -fx-border-color: #315681;
+        border-color: #315681;
+    -fx-border-radius: 2.5px 2.5px 5px 5px;
+        border-radius: 2.5px 2.5px 5px 5px;
+    -fx-font-family: "Segoe UI", sans-serif;
+        font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 1.0em;
+        font-size: 1.0em;
+    -fx-font-weight: 400;
+        font-weight: 400;
+    -fx-text-fill: #333;
+        color: #333;
+    -fx-line-height: 1.5;
+        line-height: 1.5;
+    -fx-padding: 0.8em 1.5em;
+        padding: 0.8em 1.5em;
+    -fx-cursor: hand;
+        cursor: pointer;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 1);
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-transition: -fx-scale-x 0.2s ease-in-out, -fx-scale-y 0.2s ease-in-out, -fx-effect 0.2s ease-out,
+                    -fx-background-radius 0.2 ease-out, -fx-border-width 0.2 ease-out, -fx-border-color 0.2s ease-out;
+}
+
+.custom-button:hover {
+    -fx-translate-y: -1px;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+    -fx-background-radius: 5px 5px 0px 0px;
+    -fx-border-width: 0px 0px 2.5px 0px;
+        border-width: 0px 0px 2.5px 0px;
+    -fx-border-color: #6386b1;
+        border-color: #6386b1;
+    -fx-border-radius: 5px 5px 0px 0px;
+        border-radius: 5px 5px 0px 0px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 1);
+    -fx-text-fill: #6386b1;
+        color: #6386b1;
+}
+
+.custom-button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-border-width: 0px 0px 2px 0px;
+        border-width: 0px 0px 2px 0px;
+    -fx-border-color: #315681;
+        border-color: #315681;
+}

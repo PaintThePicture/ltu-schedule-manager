@@ -1,0 +1,298 @@
+/* Style for the entire TableView */
+.custom-table-view {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-text-fill: transparent;
+        color: transparent;
+    -fx-background-radius: 4px 4px 8px 8px;
+    -fx-border-radius: 4px 4px 8px 8px;
+        border-radius: 4px 4px 8px 8px;
+    -fx-border-color: #315681;
+        border-color: #315681;
+    -fx-border-width: 1.6px 0px 0px 0px;
+        border-width: 1.6px 0px 0px 0px;
+    -fx-padding: 0px 0px 0px 0px;
+        padding: 0px 0px 0px 0px;
+    -fx-fixed-cell-size: 40px; /* Adjust as needed for row height */
+    -fx-transition: -fx-scale-x 0.2s ease-in-out, -fx-scale-y 0.2s ease-in-out,
+                    -fx-background-radius 0.2 ease-out, -fx-border-width 0.2 ease-out, -fx-border-color 0.2s ease-out;
+}
+
+/* Style for the table header */
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-background-radius: 4px 4px 8px 8px;
+    -fx-border-color: #315681;
+        border-color: #315681;
+    -fx-border-width: 0px 0px 3.2px 0px;
+        border-width: 0px 0px 3.2px 0px;
+    -fx-border-radius: 4px 4px 8px 8px;
+        border-radius: 4px 4px 8px 8px;
+    -fx-padding: 0 20 0 20;
+        padding: 0 20 0 20;
+}
+
+.table-view .column-header .filler,
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+        background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-border-color: #315681;
+        border-color: #315681;
+    -fx-border-width: 0px 0px 3.2px 0px;
+        border-width: 0px 0px 3.2px 0px;
+    -fx-border-radius: 4px 4px 8px 8px;
+        border-radius: 4px 4px 8px 8px;
+    -fx-font-family: "Segoe UI Semibold", sans-serif;
+        font-family: "Segoe UI Semibold", sans-serif;
+    -fx-font-size: 1.1em;
+        font-size: 1.1em;
+    -fx-font-weight: 600;
+        font-weight: 600;
+    -fx-text-fill: #222;
+        color: #222;
+    -fx-alignment: center;
+    -fx-border-color: transparent;
+        border-color: transparent;
+    -fx-padding: 0 20 0 20;
+        padding: 0 20 0 20;
+}
+
+.table-view .column-header .label {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-padding: 8 8 8 8;
+        padding: 8 8 8 8;
+    -fx-alignment: center;
+}
+
+
+/* Style for the table content */
+
+.table-view .table-row-cell:odd,
+.table-view .table-row-cell:even {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-padding: 0 20 0 20;
+        padding: 0 20 0 20;
+}
+.table-view .table-cell {
+    -fx-font-family: "Segoe UI", sans-serif;
+        font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 1.0em;
+        font-size: 1.0em;
+    -fx-font-weight: 400;
+        font-weight: 400;
+    -fx-text-fill: #333;
+        color: #333;
+    -fx-line-height: 1.5;
+        line-height: 1.5;
+    -fx-alignment: center;
+    -fx-border-color: transparent;
+        border-color: transparent;
+}
+.table-view:hover .table-row-cell:hover {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-border-color: linear-gradient(to right, white 1%, #6386b1 10%, #6386b1 90%, white 99%);
+        border-color: linear-gradient(to right, white 1%, #6386b1 10%, #6386b1 90%, white 99%);
+    -fx-border-width: 0px 0px 2px 0px;
+        border-width: 0px 0px 2px 0px;
+    -fx-border-radius: 2.5px 2.5px 5px 5px;
+        border-radius: 2.5px 2.5px 5px 5px;
+    -fx-scale-y: 1.02;
+    -fx-translate-y: -1px;
+    -fx-transition: none;
+    -fx-padding: 0 20 0 20;
+        padding: 0 20 0 20;
+}
+.table-view:hover .table-row-cell:hover .table-cell {
+    -fx-text-fill: #333;
+       /*  color: #333; */
+    -fx-font-size: 1.02em;
+        font-size: 1.02em;
+    -fx-transition: none;
+}
+
+/* Style for the table focused hover effect */
+
+.table-view:focused .table-row-cell:focused {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-border-color: linear-gradient(to right, white 1%, #315681 10%, #315681 90%, white 99%);
+        border-color: linear-gradient(to right, white 1%, #315681 10%, #315681 90%, white 99%);
+    -fx-border-width: 0px 0px 1px 0px;
+        border-width: 0px 0px 1px 0px;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-translate-y: 0px;
+    -fx-padding: 0 20 0 20;
+        padding: 0 20 0 20;
+}
+.table-view:focused .table-row-cell:focused .table-cell {
+    -fx-text-fill: #6386b1;
+        color: #6386b1;
+    -fx-font-size: 1.0em;
+        font-size: 1.0em;
+}
+
+/* Style for the table scroll bar*/
+
+.table-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-border-color: linear-gradient(to top, white 0%, #315681 25%, #315781 75%, white 100%);
+        border-color: linear-gradient(to top, white 0%, #315681 25%, #315681 75%, white 100%);
+    -fx-border-width: 0px 1px 0px 0px;
+        border-width: 0px 1px 0px 0px;
+    -fx-border-radius: 1.25px 1.25px 2.5px 2.5px;
+        border-radius: 1.25px 1.25px 2.5px 2.5px;
+    -fx-padding: 5 0 0 0;
+        padding: 5 0 0 0;
+}
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-border-color: linear-gradient(to right, white 0%, rgb(49, 86, 129) 25%, rgb(49, 86, 129) 75%, white 100%);
+        border-color: linear-gradient(to right, white 0%, rgb(49, 86, 129) 25%, rgb(49, 86, 129) 75%, white 100%);
+    -fx-border-width: 0px 0px 1px 0px;
+        border-width: 0px 0px 1px 0px;
+    -fx-border-radius: 1.25px 1.25px 2.5px 2.5px;
+        border-radius: 1.25px 1.25px 2.5px 2.5px;
+    -fx-padding: 0 0 0 5;
+        padding: 0 0 0 5;
+}
+.table-view .corner {
+    -fx-background-color: transparent;
+        background-color: transparent;
+}
+
+/* Style for the table scroll bar thumb*/
+
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #315681;
+        background-color: #315681;
+    -fx-background-radius: 2.5px 5px 5px 2.5px;
+}
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: #315681;
+        background-color: #315681;
+    -fx-background-radius: 2.5px 2.5px 5px 5px;
+}
+
+.table-view:hover .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #6386b1;
+        background-color: #6386b1;
+    -fx-background-radius: 5px 2.5px 2.5px 5px;
+    -fx-scale-x: 1.02;
+    -fx-translate-x: -1px;
+}
+.table-view:hover .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #6386b1;
+        background-color: #6386b1;
+    -fx-background-radius: 5px 5px 2.5px 2.5px;
+    -fx-scale-y: 1.02;
+    -fx-translate-y: -1px;
+}
+
+.table-view:focused  .scroll-bar:vertical .thumb:pressed  {
+    -fx-background-color: #315681;
+        background-color: #315681;
+    -fx-background-radius: 5px 2.5px 2.5px 5px;
+    -fx-scale-x: 0.98;
+    -fx-translate-x: 0px;
+    -fx-cursor: grab;
+        cursor: grab;
+}
+
+.table-view:focused  .scroll-bar:horizontal .thumb:pressed  {
+    -fx-background-color: #315681;
+        background-color: #315681;
+    -fx-background-radius: 5px 5px 2.5px 2.5px;
+    -fx-scale-y: 0.98;
+    -fx-translate-y: 0px;
+    -fx-cursor: grab;
+        cursor: grab;
+}
+
+/* Style for the table scroll bar button*/
+
+.table-view .scroll-bar:vertical .increment-button,
+.table-view .scroll-bar:vertical .decrement-button,
+.table-view .scroll-bar:horizontal .increment-button,
+.table-view .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+        background-color: transparent;
+    -fx-scale-x: 1.0;
+    -fx-pref-height: 18px;
+
+}
+.table-view .scroll-bar:vertical .increment-button .increment-arrow,
+.table-view .scroll-bar:vertical .decrement-button .decrement-arrow,
+.table-view .scroll-bar:horizontal .increment-button .increment-arrow,
+.table-view .scroll-bar:horizontal .decrement-button .decrement-arrow {
+    -fx-background-color: #333;
+        background-color: #333;
+    -fx-font-size: 1.2em;
+        font-size: 1.2em;
+    -fx-alignment: center
+}
+
+/* Style for the table scroll bar button hover*/
+
+.table-view:hover .scroll-bar:vertical .increment-button:hover,
+.table-view:hover .scroll-bar:vertical .decrement-button:hover {
+    -fx-scale-x: 1.02;
+    -fx-translate-x: -1px;
+
+}
+.table-view:hover .scroll-bar:horizontal .increment-button:hover,
+.table-view:hover .scroll-bar:horizontal .decrement-button:hover {
+    -fx-scale-y: 1.02;
+    -fx-translate-y: -1px;
+}
+.table-view:hover .scroll-bar:vertical .increment-button:hover .increment-arrow,
+.table-view:hover .scroll-bar:vertical .decrement-button:hover .decrement-arrow,
+.table-view:hover .scroll-bar:horizontal .increment-button:hover .increment-arrow,
+.table-view:hover .scroll-bar:horizontal .decrement-button:hover .decrement-arrow {
+    -fx-background-color: #6386b1;
+        background-color: #6386b1;
+    -fx-font-size: 1.224em;
+        font-size: 1.224em;
+}
+
+/* Style for the table scroll bar button pressed*/
+
+.table-view:pressed .scroll-bar:vertical .increment-button:pressed,
+.table-view:pressed .scroll-bar:vertical .decrement-button:pressed,
+.table-view:pressed .scroll-bar:horizontal .increment-button:pressed,
+.table-view:pressed .scroll-bar:horizontal .decrement-button:pressed {
+    -fx-background-color: transparent;
+        background-color: transparent;
+}
+.table-view:pressed .scroll-bar:vertical .increment-button:pressed,
+.table-view:pressed .scroll-bar:vertical .decrement-button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-translate-x: 0px;
+}
+.table-view:pressed .scroll-bar:horizontal .increment-button:pressed,
+.table-view:pressed .scroll-bar:horizontal .decrement-button:pressed {
+    -fx-scale-y: 0.98;
+    -fx-translate-y: 0px;
+}
+.table-view:pressed .scroll-bar:vertical .increment-button:pressed .increment-arrow,
+.table-view:pressed .scroll-bar:vertical .decrement-button:pressed .decrement-arrow,
+.table-view:pressed .scroll-bar:horizontal .increment-button:pressed .increment-arrow,
+.table-view:pressed .scroll-bar:horizontal .decrement-button:pressed .decrement-arrow {
+    -fx-background-color: #315681;
+        background-color: #315681;
+    -fx-font-size: 1.224em;
+        font-size: 1.224em;
+}
+

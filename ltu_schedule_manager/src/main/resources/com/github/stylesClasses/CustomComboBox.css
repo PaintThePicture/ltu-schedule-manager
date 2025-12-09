@@ -1,0 +1,33 @@
+/* Base ComboBox (same for all) */
+.custom-combo-box {
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-border-color: #315681;
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-radius: 5px;
+    -fx-padding: 0.3em 1em; /* NEW: give consistent height */
+}
+
+/* Editable ComboBox – match height with non-editable */
+.custom-combo-box:editable > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0.3em 0.5em; /* REDUCED padding to match height */
+    -fx-text-fill: #333;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 1.0em;
+    -fx-border-color: transparent;
+    -fx-prompt-text-fill: #666;
+}
+
+/* Arrow button */
+.custom-combo-box:editable > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0.7em 0 0;
+}
+
+/* Focus border */
+.custom-combo-box:focused {
+    -fx-border-color: #6386b1;
+    -fx-border-width: 0 0 2.5px 0;
+}

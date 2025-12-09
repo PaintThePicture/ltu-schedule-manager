@@ -1,0 +1,5 @@
+.custom-root {
+    -fx-background: #f4f4f4; /* A more common modern light background */
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-text-fill: #333333;
+}

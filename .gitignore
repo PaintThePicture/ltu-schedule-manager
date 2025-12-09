@@ -1,17 +1,45 @@
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-# https://maven.apache.org/wrapper/#usage-without-binary-jar
-.mvn/wrapper/maven-wrapper.jar
+####################################
+# A. Compiled Code and Dependencies
+####################################
 
-# Eclipse m2e generated files
-# Eclipse Core
+# Maven build output
+target/
+
+# Maven temporary files
+pom.xml.tag
+pom.xml.versions
+pom.xml.backup
+pom.xml.releaseBackup
+
+# Compiled class files
+*.class
+bin/
+
+####################################
+# B. IDE and Editor Files
+####################################
+
+# VS Code
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.settings/
 .project
-# JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+####################################
+# C. Operating System Generated Files
+####################################
+
+# macOS
+.DS_Store
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
