@@ -1,0 +1,1 @@
+# ltu-schedule-manager
