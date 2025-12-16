@@ -136,11 +136,11 @@
       <TableView fx:id="resultsTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.rowSpan="2">
         <columns>
             <TableColumn fx:id="colSelect" prefWidth="42.0" />
-          <TableColumn fx:id="colDate" prefWidth="115.0" text="Datum" />
-          <TableColumn fx:id="colTime" prefWidth="115.0" text="Tid" />
-            <TableColumn fx:id="colActivity" prefWidth="170.0" text="Aktivitet" />
-            <TableColumn fx:id="colLocation" prefWidth="115.0" text="Plats" />
-            <TableColumn fx:id="colCourseCode" prefWidth="115.0" text="Kurskod" />
+          <TableColumn fx:id="colDate" editable="false" prefWidth="115.0" text="Datum" />
+          <TableColumn fx:id="colTime" editable="false" prefWidth="115.0" text="Tid" />
+            <TableColumn fx:id="colActivity" editable="false" prefWidth="170.0" text="Aktivitet" />
+            <TableColumn fx:id="colLocation" editable="false" prefWidth="115.0" text="Plats" />
+            <TableColumn fx:id="colCourseCode" editable="false" prefWidth="115.0" text="Kurskod" />
             <TableColumn fx:id="colComment" prefWidth="200.0" text="Kommentar" />
         </columns>
       </TableView>

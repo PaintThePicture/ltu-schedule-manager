@@ -5,6 +5,7 @@ module com.github {
     requires javafx.fxml;
     requires javafx.graphics;
     requires javafx.base;
+    
 
     // Javalin and supporting dependencies
     requires io.javalin;
@@ -30,4 +31,10 @@ module com.github {
         javafx.fxml, 
         io.javalin, // Open to Javalin if it needs to access classes/records here
         com.fasterxml.jackson.databind; // Open to Jackson for JSON mapping
+
+    opens com.github.models to 
+        javafx.fxml, 
+        javafx.base,        // Krävs för PropertyValueFactory att komma åt getters/properties
+        javafx.controls,    // Krävs för CheckBoxTableCell att komma åt CheckBox-properties
+        com.fasterxml.jackson.databind;
 }
