@@ -8,8 +8,7 @@ public class CanvasCtrl implements RestApiRoutable {
 
     @Override
     public void registerEndpoints(Javalin app) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'registerEndpoints'");
+
     }
     
 }
