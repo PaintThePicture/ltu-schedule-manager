@@ -26,31 +26,26 @@ import com.github.viewmodels.viewNavigation.ViewController;
 
 public class PrimaryController implements ViewController {
 
-    @FXML private TableView<TimeEditReservation> resultsTable;
-
+    @FXML 
+    private TableView<TimeEditReservation> resultsTable;
     @FXML
     private TableColumn<TimeEditReservation, Boolean> colSelect;
-
     @FXML
     private TableColumn<TimeEditReservation, String> colDate;
-
     @FXML
     private TableColumn<TimeEditReservation, String> colTime;
-    
     @FXML
     private TableColumn<TimeEditReservation, String> colActivity;
-
     @FXML
     private TableColumn<TimeEditReservation, String> colLocation;
-
     @FXML
     private TableColumn<TimeEditReservation, String> colCourseCode;
-
     @FXML
     private TableColumn<TimeEditReservation, String> colComment;
-
     @FXML
     private TextField tfLinkTimeEdit;
+    @FXML
+    private TextField tfComment;
  
     @FXML
     void clickImport(ActionEvent event) {
@@ -109,9 +104,6 @@ public class PrimaryController implements ViewController {
     }
 
     @FXML
-    private TextField tfComment;
-
-    @FXML
     void clickSetComment(ActionEvent event) {
         String newComment = tfComment.getText();
 
@@ -158,5 +150,4 @@ public class PrimaryController implements ViewController {
     public void onUnload() {
 
     }
-
 }
