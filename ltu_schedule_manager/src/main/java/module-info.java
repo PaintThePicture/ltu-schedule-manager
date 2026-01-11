@@ -22,7 +22,7 @@ module com.github {
     requires java.sql;
 
     // REST 
-    exports com.github.rest;
+    exports com.github.api;
 
     exports com.github;
 

@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-import com.github.rest.RestApiServer;
+import com.github.api.RestApiServer;
 
 /**
  * JavaFX App
