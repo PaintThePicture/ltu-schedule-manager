@@ -8,9 +8,16 @@ import java.net.http.HttpResponse;
 
 public interface GenericHttpClient {
 
-    default String send(HttpRequest request, HttpClient client) throws IOException, InterruptedException {
-        return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+    private static String send(HttpRequest request, HttpClient client) throws IOException, InterruptedException {
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        
+        if (response.statusCode() >= 400) {
+            throw new IOException("HTTP Error: " + response.statusCode());
+        }
+    
+        return response.body();
     }
+    
 
     default String fetch(String url, HttpClient client) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
