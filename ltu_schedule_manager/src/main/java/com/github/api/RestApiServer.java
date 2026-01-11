@@ -1,6 +1,10 @@
 package com.github.api;
 
+import java.util.List;
 import java.util.Optional;
+
+import com.github.api.controllers.CanvasCtrl;
+import com.github.api.controllers.TimeEditCtrl;
 
 import io.javalin.Javalin;
 
@@ -71,20 +75,20 @@ public class RestApiServer {
     }
 
     private void configureRoutes() {
-        // The endpoints
-/*         ControllerEpok ctrlEpok = new ControllerEpok();
-        ctrlEpok.registerEndpoints(app);
 
-        ControllerLadok ctrlLadok = new ControllerLadok();
-        ctrlLadok.registerEndpoints(app);
-
-        ControllerStudentIts ctrlStudentIts = new ControllerStudentIts();
-        ctrlStudentIts.registerEndpoints(app);
-
-        System.out.printf(">>> API SERVER STATUS: API routes CONFIGURED\n\t" + 
-                                         "ROUTES: \n\t'%s'%n \t'%s'%n \t'%s'%n", 
-                                                  ctrlEpok, ctrlLadok, ctrlStudentIts
-        ); */
+        List<RestApiRoutable> routes = List.of(
+            new CanvasCtrl(),
+            new TimeEditCtrl()
+        );
+        
+        System.out.println(">>> API SERVER STATUS: API routes CONFIGURED\n\t" + 
+                                          "ROUTES:"
+        );
+        
+        routes.forEach(route -> {
+            route.registerEndpoints(app);
+            System.out.println("\t" + route.getClass().getSimpleName());
+        });
     }
 
     private void start() {
