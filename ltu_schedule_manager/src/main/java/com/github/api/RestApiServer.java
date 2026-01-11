@@ -1,4 +1,4 @@
-package com.github.rest;
+package com.github.api;
 
 import java.util.Optional;
 
