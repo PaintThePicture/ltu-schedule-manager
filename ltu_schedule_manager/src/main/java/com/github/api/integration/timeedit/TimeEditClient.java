@@ -1,76 +1,61 @@
 package com.github.api.integration.timeedit;
 
-import java.io.IOException;
-import java.net.http.HttpClient;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.models.entities.TimeEditReservation;
 import com.github.models.services.TimeEditResponse;
-import com.github.utilities.GenericHttpClient;
+import com.github.utilities.WebClient;
 
-public class TimeEditClient implements GenericHttpClient {
+public class TimeEditClient {
     
-    private static final HttpClient client = HttpClient.newHttpClient();
+    private final WebClient webClient = WebClient.getInstance();
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     public List<TimeEditReservation> fetchReservations(String URL) {
         try {
-            String json = fetch(URL, client);
+            String json = webClient.fetchAsync(URL).join();
 
             return mapper.readValue(json, TimeEditResponse.class).getReservations();
-        } catch (IOException e) {
-            System.out.println(">>> API SERVER STATUS: API route Exception IO \n");
-            //e.printStackTrace();
-        } catch (InterruptedException e) {
-            System.out.println(">>> API SERVER STATUS: API route Exception Interrupted \n");
-            //e.printStackTrace();
-        }
+        
+        } catch (Exception e) {
+            System.err.println(">>> API SERVER STATUS: API route Exception at retrieving\n" + 
+                               e.getMessage() + "\n");
+        } 
         return List.of();
     }
 
     public List<TimeEditReservation> searchAndGetSchedule(String courseId) {
         try {
 
-            String searchJson = fetch(EndPoint.SEARCH + courseId, client);
+            String searchJson = webClient.fetchAsync(EndPoint.SEARCH + courseId).join();
 
             return searchTimeEditId(searchJson).filter(nodes -> nodes.isArray() && !nodes.isEmpty())
-                                               .map(id -> {
+                                               .map(nodes -> {
                                                 
-                String timeEditId = id.get(0).get("id").asText().toUpperCase();
+                String timeEditId = nodes.get(0).get("id").asText().toUpperCase();
                                                 
                 return fetchReservations(EndPoint.SCHEDULE + timeEditId);
 
             }).orElse(List.of());
-        
-        } catch (IOException e) {
-            System.out.println(">>> API SERVER STATUS: API route Exception IO \n");
-            //e.printStackTrace();
-        } catch (InterruptedException e) {
-            System.out.println(">>> API SERVER STATUS: API route Exception Interrupted \n");
-            //e.printStackTrace();
+
+        } catch (Exception e) {
+            System.err.println(">>> API SERVER STATUS: API route Exception at searching\n" + 
+                               e.getMessage() + "\n");
         }
         return List.of();
     }
 
     private Optional<com.fasterxml.jackson.databind.JsonNode> searchTimeEditId(String searchJson) {
-        com.fasterxml.jackson.databind.JsonNode root = null;
-        com.fasterxml.jackson.databind.JsonNode objects = null;
-
         try {
-            root = mapper.readTree(searchJson);
-            objects = root.get("objects");
-        } catch (JsonMappingException e) {
-            System.out.println(">>> API SERVER STATUS: API route Exception JsonMapping \n");
-            //e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            System.out.println(">>> API SERVER STATUS: API route Exception JsonProcessing \n");
-            //e.printStackTrace();
+            return Optional.ofNullable(mapper.readTree(searchJson).get("objects"));
+        } catch (Exception e) {
+            System.out.println(">>> API SERVER STATUS: API route Exception Json Parsing\n" +
+                               e.getMessage() + "\n");
         }
-        return Optional.ofNullable(objects);
+        return Optional.empty();
     }
 
     private enum EndPoint {
