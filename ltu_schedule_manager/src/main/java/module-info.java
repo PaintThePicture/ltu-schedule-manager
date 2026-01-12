@@ -32,9 +32,15 @@ module com.github {
         io.javalin, // Open to Javalin if it needs to access classes/records here
         com.fasterxml.jackson.databind; // Open to Jackson for JSON mapping
 
-    opens com.github.models to 
+    opens com.github.models.entities to 
         javafx.fxml, 
         javafx.base,        // Krävs för PropertyValueFactory att komma åt getters/properties
         javafx.controls,    // Krävs för CheckBoxTableCell att komma åt CheckBox-properties
+        com.fasterxml.jackson.databind;
+    
+    opens com.github.models.services to
+        com.fasterxml.jackson.databind;
+        
+    opens com.github.utilities to 
         com.fasterxml.jackson.databind;
 }
