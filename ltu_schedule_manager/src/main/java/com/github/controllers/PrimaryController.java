@@ -13,8 +13,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell; 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.models.TimeEditReservation;
-import com.github.models.TimeEditResponse;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -22,6 +20,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
+import com.github.models.entities.TimeEditReservation;
+import com.github.models.services.TimeEditResponse;
 import com.github.viewmodels.viewNavigation.ViewController;
 
 public class PrimaryController implements ViewController {

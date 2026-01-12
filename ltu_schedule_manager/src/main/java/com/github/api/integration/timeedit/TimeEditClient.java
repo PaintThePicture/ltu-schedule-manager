@@ -8,8 +8,8 @@ import java.util.Optional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.models.TimeEditReservation;
-import com.github.models.TimeEditResponse;
+import com.github.models.entities.TimeEditReservation;
+import com.github.models.services.TimeEditResponse;
 import com.github.utilities.GenericHttpClient;
 
 public class TimeEditClient implements GenericHttpClient {
