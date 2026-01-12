@@ -34,24 +34,17 @@ public class TimeEditClient implements GenericHttpClient {
 
     public List<TimeEditReservation> searchAndGetSchedule(String courseId) {
         try {
-        String searchBaseUrl = "https://cloud.timeedit.net/ltu/web/schedule1" + 
-                               "/objects.json?fr=f&part=t&sid=3&types=28&search_text=";
 
-        String searchJson = fetch(searchBaseUrl + courseId, client);
+            String searchJson = fetch(EndPoint.SEARCH + courseId, client);
 
-        return searchTimeEditId(searchJson).filter(nodes -> nodes.isArray() && !nodes.isEmpty())
-                                           .map(id -> {
-            
-                                           
-            String timeEditId = id.get(0).get("id").asText();
+            return searchTimeEditId(searchJson).filter(nodes -> nodes.isArray() && !nodes.isEmpty())
+                                               .map(id -> {
+                                                
+                String timeEditId = id.get(0).get("id").asText().toUpperCase();
+                                                
+                return fetchReservations(EndPoint.SCHEDULE + timeEditId);
 
-            String scheduleBaseeUrl = "https://cloud.timeedit.net/ltu/web/schedule1" + 
-                                      "/s.json?sid=3&p=-20.w,12.w&objects=";
-            
-            return fetchReservations(scheduleBaseeUrl + timeEditId);
-
-        }).orElse(List.of());
-
+            }).orElse(List.of());
         
         } catch (IOException e) {
             System.out.println(">>> API SERVER STATUS: API route Exception IO \n");
@@ -78,6 +71,27 @@ public class TimeEditClient implements GenericHttpClient {
             //e.printStackTrace();
         }
         return Optional.ofNullable(objects);
+    }
+
+    private enum EndPoint {
+        SEARCH("/objects.json?fr=f&part=t&sid=3&types=28&search_text="),
+        SCHEDULE("/s.json?sid=3&p=-20.w,12.w&objects=");
+
+        private final String value;
+        private final static String BASE_URL = "https://cloud.timeedit.net/ltu/web/schedule1";
+
+        EndPoint(String path) {
+            this.value = BASE_URL + path;
+        }
+
+        public String getValue() {
+            return this.value;
+        }
+        
+        @Override
+        public String toString() {
+            return this.value;
+        }
     }
 }
 
