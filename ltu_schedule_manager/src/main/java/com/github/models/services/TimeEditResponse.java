@@ -1,7 +1,8 @@
-package com.github.models; 
+package com.github.models.services; 
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.github.models.entities.TimeEditReservation;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeEditResponse {

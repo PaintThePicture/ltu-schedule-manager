@@ -1,4 +1,4 @@
-package com.github.models;
+package com.github.models.entities;
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
