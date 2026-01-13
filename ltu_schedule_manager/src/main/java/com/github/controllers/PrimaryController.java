@@ -21,7 +21,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
 import com.github.models.entities.TimeEditReservation;
-import com.github.models.services.TimeEditResponse;
+import com.github.models.services.TimeEditResp;
 import com.github.viewmodels.viewNavigation.ViewController;
 
 public class PrimaryController implements ViewController {
@@ -70,7 +70,7 @@ public class PrimaryController implements ViewController {
 
             // Parsning av JSON till Java-objekt (Jackson)
             ObjectMapper mapper = new ObjectMapper();
-            TimeEditResponse timeEditData = mapper.readValue(jsonBody, TimeEditResponse.class);
+            TimeEditResp timeEditData = mapper.readValue(jsonBody, TimeEditResp.class);
 
             // Fyll TableView
             ObservableList<TimeEditReservation> reservations = 
