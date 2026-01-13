@@ -20,11 +20,14 @@ module com.github {
     
     // JDBC
     requires java.sql;
+    requires com.fasterxml.jackson.annotation;
 
     // REST 
     exports com.github.api;
 
     exports com.github;
+
+    opens com.github.api.integration.timeedit to com.fasterxml.jackson.databind;
 
     // Javafx, Spring Core
     opens com.github.controllers to 
