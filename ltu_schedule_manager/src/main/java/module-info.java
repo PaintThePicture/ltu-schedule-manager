@@ -26,8 +26,12 @@ module com.github {
     exports com.github.api;
 
     exports com.github;
-
-    opens com.github.api.integration.timeedit to com.fasterxml.jackson.databind;
+    
+    opens com.github.api.controllers to 
+        com.fasterxml.jackson.databind, io.javalin;
+        
+    opens com.github.api.integration.timeedit to 
+        com.fasterxml.jackson.databind;
 
     // Javafx, Spring Core
     opens com.github.controllers to 

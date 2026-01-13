@@ -5,6 +5,8 @@ import com.github.api.integration.timeedit.TimeEditClient;
 
 import io.javalin.Javalin;
 
+record TimeEditResponse(java.util.List<com.github.models.entities.TimeEditReservation> reservations) {}
+
 public class TimeEditCtrl implements RestApiRoutable {
 
     private final TimeEditClient teClient = new TimeEditClient();
@@ -26,7 +28,7 @@ public class TimeEditCtrl implements RestApiRoutable {
             if(schedule.isEmpty()) {
                 ctx.status(404).result("Error: schema för kurs " + courseId + " kunde inte hittas");
             } else {
-                ctx.json(schedule);
+                ctx.json(new TimeEditResponse(schedule));
             }
         });
 
@@ -43,10 +45,7 @@ public class TimeEditCtrl implements RestApiRoutable {
                                       .replace(".xml", ".json)");
              
             var schedule = teClient.fetchReservations(jsonUrl);
-            ctx.json(schedule);
+            ctx.json(new TimeEditResponse(schedule));
         });
     }
-
-
-    
 }
