@@ -17,7 +17,7 @@ public class ScheduleClient {
     public CompletableFuture<List<TimeEditReservation>> getScheduleByCourse(String courseId) {
         String targetUrl = "http://localhost:7070/api/time-edit/courses/" + courseId + "/schedule";
 
-        return webClient.fetchAsync(targetUrl)
+        return webClient.getAsync(targetUrl)
                         .thenApply(json -> {
                             try {
                                 TimeEditResponse response = mapper.readValue(json, TimeEditResponse.class);
@@ -39,7 +39,7 @@ public class ScheduleClient {
         String encodedUrl = java.net.URLEncoder.encode(url, java.nio.charset.StandardCharsets.UTF_8);
         String targetUrl = "http://localhost:7070/api/time-edit/course/schedule/fetch?url=" + encodedUrl;
         
-        return webClient.fetchAsync(targetUrl)
+        return webClient.getAsync(targetUrl)
                         .thenApply(json -> {
                             try {
                                 TimeEditResponse response = mapper.readValue(json, TimeEditResponse.class);
