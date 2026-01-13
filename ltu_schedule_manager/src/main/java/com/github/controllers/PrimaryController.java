@@ -1,27 +1,15 @@
 package com.github.controllers;
 
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell; 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 
 import com.github.models.entities.TimeEditReservation;
-import com.github.models.services.TimeEditResp;
+import com.github.models.services.ScheduleStore;
+import com.github.models.services.ScheduleTableBuilder;
 import com.github.viewmodels.viewNavigation.ViewController;
 
 public class PrimaryController implements ViewController {
@@ -51,72 +39,31 @@ public class PrimaryController implements ViewController {
     void clickImport(ActionEvent event) {
         String url = tfLinkTimeEdit.getText();
 
-        if (url.endsWith(".html")) {
-            url = url.replace(".html", ".json");
-            tfLinkTimeEdit.setText(url); 
-        }
-
-        // Nedan kanske borde göras till en egen klass?
-        try {
-            // Hämta JSON-data från TimeEdit
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .GET()
-                    .build();
-
-            HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-            String jsonBody = response.body();
-
-            // Parsning av JSON till Java-objekt (Jackson)
-            ObjectMapper mapper = new ObjectMapper();
-            TimeEditResp timeEditData = mapper.readValue(jsonBody, TimeEditResp.class);
-
-            // Fyll TableView
-            ObservableList<TimeEditReservation> reservations = 
-                FXCollections.observableArrayList(timeEditData.getReservations());
-                
-            // Se till att uppdateringen sker på JavaFX Application Thread
-            Platform.runLater(() -> {
-                resultsTable.setItems(reservations);
-            });
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Ett fel uppstod vid importen: " + e.getMessage());
-        }
+        ScheduleStore.getInstance().importFromUrl(url);
     }
 
     @FXML
     void clickSelectAll(ActionEvent event) {
-        for (TimeEditReservation reservation : resultsTable.getItems()) {
-            reservation.setSelected(true);
-        }
-        resultsTable.refresh(); 
+        ScheduleStore.getInstance().getReservations().forEach(r -> r.setSelected(true));
+        
+        resultsTable.refresh();
     }
 
     @FXML
     void clickSelectNone(ActionEvent event) {
-        for (TimeEditReservation reservation : resultsTable.getItems()) {
-            reservation.setSelected(false);
-        }
+        ScheduleStore.getInstance().getReservations().forEach(r -> r.setSelected(false));
+        
         resultsTable.refresh();
     }
 
     @FXML
     void clickSetComment(ActionEvent event) {
-        String newComment = tfComment.getText();
+        String comment = tfComment.getText();
 
-        if (resultsTable.getItems() == null) {
-            return;
-        }
+        ScheduleStore.getInstance().getReservations().stream()
+                     .filter(TimeEditReservation::isSelected)
+                     .forEach(r -> r.setUserComment(comment));
 
-        for (TimeEditReservation reservation : resultsTable.getItems()) {
-            if (reservation.isSelected()) {
-                reservation.setUserComment(newComment);
-            }
-        }
-        
         resultsTable.refresh();
     }
 
@@ -127,23 +74,14 @@ public class PrimaryController implements ViewController {
 
     @Override
     public void initialize() {
-        colSelect.setCellValueFactory(new PropertyValueFactory<>("selected"));
-        colDate.setCellValueFactory(new PropertyValueFactory<>("displayDate"));
-        colTime.setCellValueFactory(new PropertyValueFactory<>("displayTimeRange"));
-        colActivity.setCellValueFactory(new PropertyValueFactory<>("activity"));
-        colLocation.setCellValueFactory(new PropertyValueFactory<>("location"));
-        colCourseCode.setCellValueFactory(new PropertyValueFactory<>("courseCode"));
-        colComment.setCellValueFactory(new PropertyValueFactory<>("userComment"));
+        new ScheduleTableBuilder.Builder(resultsTable, colSelect, colDate, colTime)
+            .withActivity(colActivity)
+            .withLocation(colLocation)
+            .withCourseCode(colCourseCode)
+            .withComment(colComment)
+            .build();
 
-        // Gör tabellen redigerbar
-        resultsTable.setEditable(true);
-
-        // Hanterar kommentar-kolumnen (TextField)
-        colComment.setCellFactory(TextFieldTableCell.forTableColumn());
-        colComment.setEditable(true);
-
-        // Hanterar urvalskolumnen (CheckBox)
-        colSelect.setCellFactory(CheckBoxTableCell.forTableColumn(colSelect));
+        resultsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     }
 
     @Override
