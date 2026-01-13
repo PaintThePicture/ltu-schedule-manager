@@ -3,10 +3,13 @@ package com.github.api.integration.timeedit;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.models.entities.TimeEditReservation;
-import com.github.models.services.TimeEditResponse;
 import com.github.utilities.WebClient;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+record TimeEditResponse(List<TimeEditReservation> reservations) {}
 
 public class TimeEditClient {
     
@@ -18,7 +21,9 @@ public class TimeEditClient {
         try {
             String json = webClient.fetchAsync(URL).join();
 
-            return mapper.readValue(json, TimeEditResponse.class).getReservations();
+            TimeEditResponse response = mapper.readValue(json, TimeEditResponse.class);
+
+            return response.reservations() != null ? response.reservations() : List.<TimeEditReservation>of();
         
         } catch (Exception e) {
             System.err.println(">>> API SERVER STATUS: API route Exception at retrieving\n" + 
