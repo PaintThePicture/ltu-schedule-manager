@@ -1,6 +1,5 @@
 package com.github.models.entities;
 
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.SimpleStringProperty;

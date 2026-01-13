@@ -1,11 +1,17 @@
 package com.github.api.controllers;
 
+import java.util.List;
+
+import org.eclipse.jetty.http.HttpStatus;
+
 import com.github.api.RestApiRoutable;
-import com.github.api.integration.timeedit.TimeEditClient;
+import com.github.api.services.integration.TimeEditClient;
+import com.github.api.services.mapping.TimeEditWrapper;
+import com.github.models.entities.TimeEditReservation;
 
 import io.javalin.Javalin;
 
-record TimeEditResponse(java.util.List<com.github.models.entities.TimeEditReservation> reservations) {}
+record TimeEditResponse(List<TimeEditReservation> reservations) {}
 
 public class TimeEditCtrl implements RestApiRoutable {
 
@@ -18,18 +24,20 @@ public class TimeEditCtrl implements RestApiRoutable {
 
             String courseId = ctx.pathParam("courseId");
 
-            if (courseId.isEmpty() || courseId.isBlank()) {
-                ctx.status(400).result("Error: Kurskod saknas.");
-                return;
-            }
-
-            var schedule = teClient.searchAndGetSchedule(courseId);
-
-            if(schedule.isEmpty()) {
-                ctx.status(404).result("Error: schema för kurs " + courseId + " kunde inte hittas");
-            } else {
-                ctx.json(new TimeEditResponse(schedule));
-            }
+            ctx.future(() -> teClient.searchAndGetSchedule(courseId)
+                                     .thenAccept(reservations -> {
+                                        if (reservations.isEmpty()) {
+                                            ctx.status(HttpStatus.NOT_FOUND_404).result("Error: Inga reservationer hittades för '" + 
+                                                                             courseId + "'.");
+                                        } else {
+                                            ctx.json(new TimeEditResponse(reservations));
+                                        }
+                                     }).exceptionally(e -> {
+                                        ctx.status(HttpStatus.INTERNAL_SERVER_ERROR_500).result("Error: internt fel \n" + 
+                                                                                    e.getMessage());
+                                     return null;  
+                                     })
+            );
         });
 
         app.get("/api/time-edit/course/schedule/fetch", ctx -> {
