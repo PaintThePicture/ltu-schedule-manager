@@ -3,7 +3,8 @@ package com.github.api.services.integration;
 import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.api.services.mapping.CanvasWrapper;
+import com.github.api.dto.CanvasRawDTO;
+import com.github.api.services.mapping.CanvasSchemas;
 import com.github.utilities.WebClient;
 
 public class CanvasClient {
@@ -12,13 +13,15 @@ public class CanvasClient {
     
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public CompletableFuture<String> pushEvent(String token, CanvasWrapper wrapper) {
+    public CompletableFuture<String> pushEvent(String token, CanvasRawDTO eventData) {
         try {
-            String jsonBody = mapper.writeValueAsString(wrapper);
+            CanvasSchemas.ExportResponse body = new CanvasSchemas.ExportResponse(eventData);
+            
+            String jsonBody = mapper.writeValueAsString(body);
 
             return webClient.postAsync(EndPoint.CALENDAR.getValue(), token, jsonBody);
         } catch (Exception e) {
-            return CompletableFuture.failedFuture(e);
+            throw new RuntimeException(e);
         }
     }
 

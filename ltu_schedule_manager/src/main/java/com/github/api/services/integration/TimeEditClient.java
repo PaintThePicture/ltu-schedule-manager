@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.api.services.mapping.TimeEditMapper;
-import com.github.api.services.mapping.TimeEditWrapper;
+import com.github.api.services.mapping.TimeEditSchemas;
 import com.github.models.entities.TimeEditReservation;
 import com.github.utilities.WebClient;
 
@@ -18,8 +18,9 @@ public class TimeEditClient {
     public CompletableFuture<List<TimeEditReservation>> fetchReservations(String url) {
        return webClient.getAsync(url).thenApply(json -> {
             try {
-
-                TimeEditWrapper wrapper = mapper.readValue(json, TimeEditWrapper.class);
+                TimeEditSchemas.rawResponse wrapper = mapper
+                               .readValue(json, TimeEditSchemas
+                               .rawResponse.class);
 
                 return (wrapper.reservations() == null)
                        ? List.of()
@@ -27,11 +28,9 @@ public class TimeEditClient {
                                                .map(TimeEditMapper::toEntity)
                                                .toList();
             } catch (Exception e) {
-                throw new RuntimeException(">>> API SERVER STATUS: API route Exception mapping failed\n" + 
-                                           e.getMessage() + "\n");
+                throw new RuntimeException(e);
             }
        });
-       
     }
 
     public CompletableFuture<List<TimeEditReservation>>  searchAndGetSchedule(String courseId) {
