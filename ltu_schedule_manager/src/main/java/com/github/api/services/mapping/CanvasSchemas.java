@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.api.dto.CanvasRawDTO;
 
+/**
+ * Defines schema records for Canvas API responses.
+ */
 public interface CanvasSchemas {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
