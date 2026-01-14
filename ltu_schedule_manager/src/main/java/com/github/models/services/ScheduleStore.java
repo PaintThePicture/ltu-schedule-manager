@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 public class ScheduleStore {
     private static final ScheduleStore INSTANCE = new ScheduleStore();
 
-    private final ScheduleClient client = new ScheduleClient();
+    private final TimEditService client = new TimEditService();
 
     private final ObservableList<TimeEditReservation> reservations = FXCollections.observableArrayList();
 
