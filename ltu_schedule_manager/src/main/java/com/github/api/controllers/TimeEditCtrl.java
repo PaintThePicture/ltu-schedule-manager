@@ -6,12 +6,10 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import com.github.api.RestApiRoutable;
 import com.github.api.services.integration.TimeEditClient;
-import com.github.api.services.mapping.TimeEditWrapper;
+import com.github.api.services.mapping.TimeEditSchemas;
 import com.github.models.entities.TimeEditReservation;
 
 import io.javalin.Javalin;
-
-record TimeEditResponse(List<TimeEditReservation> reservations) {}
 
 public class TimeEditCtrl implements RestApiRoutable {
 
@@ -27,33 +25,42 @@ public class TimeEditCtrl implements RestApiRoutable {
             ctx.future(() -> teClient.searchAndGetSchedule(courseId)
                                      .thenAccept(reservations -> {
                                         if (reservations.isEmpty()) {
-                                            ctx.status(HttpStatus.NOT_FOUND_404).result("Error: Inga reservationer hittades för '" + 
-                                                                             courseId + "'.");
+                                            ctx.status(HttpStatus.NOT_FOUND_404)
+                                               .result(">>> API SERVER STATUS: Not found\n\t" + 
+                                                       "No reservations found for course: " + courseId);
                                         } else {
-                                            ctx.json(new TimeEditResponse(reservations));
+                                            ctx.json(new TimeEditSchemas.ExportResponse(reservations));
                                         }
-                                     }).exceptionally(e -> {
-                                        ctx.status(HttpStatus.INTERNAL_SERVER_ERROR_500).result("Error: internt fel \n" + 
-                                                                                    e.getMessage());
-                                     return null;  
+                                     })
+                                     .exceptionally(e -> {
+                                        Throwable cause = e.getCause();
+                                            
+                                        ctx.status(500).result(">>> API SERVER STATUS: Exception\n\t" + 
+                                                                     cause.getMessage());
+                                        return null;
                                      })
             );
         });
 
         app.get("/api/time-edit/course/schedule/fetch", ctx -> {
-
+            
             String targetUrl = ctx.queryParam("url");
 
-            if(targetUrl.isEmpty() || targetUrl.isBlank()) {
-                ctx.status(400).result("Error: parameter för 'url' saknas");
-                return;
-            }
-
             String jsonUrl = targetUrl.replace(".html", ".json")
-                                      .replace(".xml", ".json)");
+                                      .replace(".xml", ".json");
              
-            var schedule = teClient.fetchReservations(jsonUrl);
-            ctx.json(new TimeEditResponse(schedule));
+            ctx.future(() -> teClient.fetchReservations(jsonUrl)
+                                     .thenAccept(reservations -> {
+                                        ctx.json(new TimeEditSchemas.ExportResponse(reservations));
+                                     })
+                                     .exceptionally(e -> {
+                                        Throwable cause = (e.getCause() != null) ? e.getCause() : e;
+                                            
+                                        ctx.status(500).result(">>> API SERVER STATUS: Exception\n\t" + 
+                                                                     cause.getMessage());
+                                        return null;
+                                     })
+            );
         });
     }
 }
