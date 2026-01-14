@@ -33,8 +33,10 @@ public class CanvasCtrl implements RestApiRoutable {
      */
     @Override
     public void registerEndpoints(Javalin app) {
+
         // Endpoint to export events to Canvas.
         app.post("/api/canvas/events/export", ctx -> {
+
             // Parse the request body into a list of TimeEditReservation objects.
             List<TimeEditReservation> reservations = ctx.bodyAsClass(new TypeReference<List<TimeEditReservation>>(){}.getType());
             
@@ -56,6 +58,7 @@ public class CanvasCtrl implements RestApiRoutable {
                                         "\tCOUNT: " + reservations.size()
                                     ))
                                     .exceptionally(e -> {
+                                        
                                         // Handle any exceptions that occur during the export process.
                                         Throwable cause = (e.getCause() != null) ? e.getCause() : e;
 
