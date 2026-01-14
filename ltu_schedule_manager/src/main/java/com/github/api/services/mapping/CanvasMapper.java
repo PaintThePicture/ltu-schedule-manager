@@ -7,18 +7,25 @@ public class CanvasMapper {
     public static CanvasRawDTO toApiWrapper(
         String contextCode, 
         String title, 
-        String startIso, 
-        String endIso,
+        String displayDate,
+        String startTime, 
+        String endTime,
         String location,
         String description) {
         
         return new CanvasRawDTO(
             contextCode,
             title,
-            startIso,
-            endIso,
+            formatToIso(displayDate, startTime),
+            formatToIso(displayDate, endTime),
             location,
             description  
         );
+    }
+    private static String formatToIso(String date, String time) {
+        if (date == null || time == null) {
+            return null;
+        }
+        return date + "T" + time + ":00Z";
     }
 }

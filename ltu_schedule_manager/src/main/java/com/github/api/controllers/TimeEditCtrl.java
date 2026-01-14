@@ -23,41 +23,47 @@ public class TimeEditCtrl implements RestApiRoutable {
             String courseId = ctx.pathParam("courseId");
 
             ctx.future(() -> teClient.searchAndGetSchedule(courseId)
-                                     .thenAccept(reservations -> {
-                                        if (reservations.isEmpty()) {
-                                            ctx.status(HttpStatus.NOT_FOUND_404)
-                                               .result(">>> API SERVER STATUS: Not found\n\t" + 
-                                                       "No reservations found for course: " + courseId);
-                                        } else {
-                                            ctx.json(new TimeEditSchemas.ExportResponse(reservations));
-                                        }
+                                     .thenAccept(dtoList -> {
+                                        if (dtoList.isEmpty()) {
+                                            ctx.status(404).result(
+                                                            ">>> API SERVER STATUS: Not Found\n" +
+                                                            "\tSERVICE: TimeEdit\n" +
+                                                            "\tDETAIL: No reservations found for course: " + courseId
+                                            );
+                                        } 
+                                        ctx.json(dtoList);
                                      })
                                      .exceptionally(e -> {
-                                        Throwable cause = e.getCause();
-                                            
-                                        ctx.status(500).result(">>> API SERVER STATUS: Exception\n\t" + 
-                                                                     cause.getMessage());
+                                        Throwable cause = (e.getCause() != null) ? e.getCause() : e;
+
+                                        ctx.status(500).result(">>> API SERVER STATUS: Integration Error\n" +
+                                                                    "\tSERVICE: TimeEdit\n" +
+                                                                    "\tMESSAGE: " + cause.getMessage()
+                                        );
                                         return null;
                                      })
             );
         });
 
         app.get("/api/time-edit/course/schedule/fetch", ctx -> {
-            
-            String targetUrl = ctx.queryParam("url");
+            String rawUrl = ctx.queryParam("url");
 
-            String jsonUrl = targetUrl.replace(".html", ".json")
-                                      .replace(".xml", ".json");
-             
-            ctx.future(() -> teClient.fetchReservations(jsonUrl)
-                                     .thenAccept(reservations -> {
-                                        ctx.json(new TimeEditSchemas.ExportResponse(reservations));
+            String timeEditUrl = rawUrl.trim().replace(".html", ".json")
+                                              .replace(".xml", ".json");
+
+            ctx.future(() -> teClient.fetchCleanedDto(timeEditUrl)
+                                     .thenAccept(dtoList -> {
+                                        if (dtoList.isEmpty()) { ctx.status(204); }
+                                        
+                                        ctx.json(dtoList); 
                                      })
                                      .exceptionally(e -> {
                                         Throwable cause = (e.getCause() != null) ? e.getCause() : e;
-                                            
-                                        ctx.status(500).result(">>> API SERVER STATUS: Exception\n\t" + 
-                                                                     cause.getMessage());
+
+                                        ctx.status(500).result(">>> API SERVER STATUS: Integration Error\n" +
+                                                                    "\tSERVICE: TimeEdit\n" +
+                                                                    "\tMESSAGE: " + cause.getMessage()
+                                        );
                                         return null;
                                      })
             );

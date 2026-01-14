@@ -1,53 +1,43 @@
 module com.github {
-
-    // Javafx Module Requirments
+    // 1. Core Java and JavaFX Modules
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
     requires javafx.base;
-    
+    requires java.net.http;
+    requires java.sql;
+    requires java.logging;
 
-    // Javalin and supporting dependencies
+    // 2. External Library Dependencies
     requires io.javalin;
     requires org.slf4j;
-    requires java.logging; // often needed by SLF4J implementations
-    requires java.net.http;
-
-    // Jackson (for JSON serialization/deserialization)
-    // Javalin uses these internally to handle JSON requests/responses
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.core;
-    
-    // JDBC
-    requires java.sql;
     requires com.fasterxml.jackson.annotation;
 
-    // REST 
-    exports com.github.api;
-
+    // 3. EXPORTS (Allows classes to be imported by other packages)
     exports com.github;
-    
-    opens com.github.api.controllers to 
-        com.fasterxml.jackson.databind, io.javalin;
-        
-    opens com.github.api.integration.timeedit to 
-        com.fasterxml.jackson.databind;
+    exports com.github.controllers;
+    exports com.github.models.entities;
+    exports com.github.models.services;
+    exports com.github.api.controllers;
+    exports com.github.api.dto;
+    exports com.github.api.services.integration;
+    exports com.github.utilities;
+    exports com.github.api;
+    exports com.github.viewmodels.viewNavigation;
 
-    // Javafx, Spring Core
-    opens com.github.controllers to 
-        javafx.fxml, 
-        io.javalin, // Open to Javalin if it needs to access classes/records here
-        com.fasterxml.jackson.databind; // Open to Jackson for JSON mapping
-
-    opens com.github.models.entities to 
-        javafx.fxml, 
-        javafx.base,        // Krävs för PropertyValueFactory att komma åt getters/properties
-        javafx.controls,    // Krävs för CheckBoxTableCell att komma åt CheckBox-properties
-        com.fasterxml.jackson.databind;
+    // 4. OPENS (Required for Reflection - used by JavaFX FXML and Jackson JSON)
     
-    opens com.github.models.services to
-        com.fasterxml.jackson.databind;
-        
-    opens com.github.utilities to 
-        com.fasterxml.jackson.databind;
+    // Required for JavaFX to inject members into @FXML annotated fields
+    opens com.github.controllers to javafx.fxml;
+    opens com.github.viewmodels.viewNavigation to javafx.fxml;
+    
+    // Required for JavaFX TableView to access fields via PropertyValueFactory
+    opens com.github.models.entities to javafx.base;
+
+    // Required for Jackson to serialize/deserialize JSON to Java objects
+    opens com.github.api.dto to com.fasterxml.jackson.databind;
+    opens com.github.api.services.mapping to com.fasterxml.jackson.databind;
+    opens com.github.models.services to com.fasterxml.jackson.databind;
 }
