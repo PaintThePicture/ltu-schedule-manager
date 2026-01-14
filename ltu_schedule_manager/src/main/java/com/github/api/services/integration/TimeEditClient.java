@@ -4,9 +4,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.api.services.mapping.TimeEditMapper;
+import com.github.api.dto.TimeEditRawDTO;
 import com.github.api.services.mapping.TimeEditSchemas;
-import com.github.models.entities.TimeEditReservation;
 import com.github.utilities.WebClient;
 
 public class TimeEditClient {
@@ -15,28 +14,24 @@ public class TimeEditClient {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public CompletableFuture<List<TimeEditReservation>> fetchReservations(String url) {
-       return webClient.getAsync(url).thenApply(json -> {
+    public CompletableFuture<List<TimeEditRawDTO>> fetchCleanedDto(String url) {
+    return webClient.getAsync(url).thenApply(json -> {
             try {
-                TimeEditSchemas.rawResponse wrapper = mapper
-                               .readValue(json, TimeEditSchemas
-                               .rawResponse.class);
-
-                return (wrapper.reservations() == null)
-                       ? List.of()
-                       : wrapper.reservations().stream()
-                                               .map(TimeEditMapper::toEntity)
-                                               .toList();
+                TimeEditSchemas.rawResponse wrapper = mapper.readValue(json, TimeEditSchemas
+                                                            .rawResponse.class);
+                
+                return wrapper.reservations() != null ? wrapper.reservations() : List.of();
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Mapping Failed\n\tSOURCE: TimeEdit API\n\tDETAIL: " + 
+                                            e.getMessage());
             }
-       });
+        });
     }
 
-    public CompletableFuture<List<TimeEditReservation>>  searchAndGetSchedule(String courseId) {
+    public CompletableFuture<List<TimeEditRawDTO>>  searchAndGetSchedule(String courseId) {
         return fetchInteralId(courseId).thenCompose(id -> id.isEmpty()
-                                      ? CompletableFuture.completedFuture(List.<TimeEditReservation>of())
-                                      : fetchReservations(EndPoint.SCHEDULE.getValue() + id));
+                                       ? CompletableFuture.completedFuture(List.<TimeEditRawDTO>of())
+                                       : fetchCleanedDto(EndPoint.SCHEDULE.getValue() + id));
     }
 
     private CompletableFuture<String> fetchInteralId(String courseId) {

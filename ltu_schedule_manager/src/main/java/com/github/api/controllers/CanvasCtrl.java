@@ -1,11 +1,14 @@
 package com.github.api.controllers;
 
+import java.util.List;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.api.RestApiRoutable;
-import com.github.api.dto.CanvasRawDTO;
 import com.github.api.services.integration.CanvasClient;
+import com.github.models.entities.TimeEditReservation;
 
 import io.javalin.Javalin;
-import io.javalin.http.HttpStatus;
+
 
 public class CanvasCtrl implements RestApiRoutable {
 
@@ -13,33 +16,33 @@ public class CanvasCtrl implements RestApiRoutable {
 
     @Override
     public void registerEndpoints(Javalin app) {
-        app.post("/api/canvas/events", ctx -> {
-
-            String authHeader = ctx.header("Authorization");
-            String token;
-
-            if(authHeader != null && authHeader.startsWith("Bearer ")) {
-                token = authHeader.substring(7);
-            } else {
-                ctx.status(HttpStatus.UNAUTHORIZED).result("Error: Canvas Token saknas");
-                return;
-            }
-
-            CanvasRawDTO eventData = ctx.bodyAsClass(CanvasRawDTO.class);
+        app.post("/api/canvas/events/export", ctx -> {
+            List<TimeEditReservation> reservations = ctx.bodyAsClass(new TypeReference<List<TimeEditReservation>>(){}.getType());
             
-            ctx.future(() -> caClient.pushEvent(token, eventData)
-                .thenAccept(response -> {
-                    ctx.status(HttpStatus.CREATED)
-                       .result(response);
-                })
-                .exceptionally(e -> {
-                    Throwable cause = (e.getCause() != null) ? e.getCause() : e;
+            String authHeader = ctx.header("Authorization");
+            String contextCode = ctx.queryParam("contextCode");
 
-                    ctx.status(HttpStatus.INTERNAL_SERVER_ERROR).result(">>> API SERVER STATUS: EXCEPTION\n\t" + 
-                                                                         cause.getMessage());
-                    return null;
-                })
-            );
+            if (authHeader != null) {
+                authHeader = authHeader.replaceFirst("(?i)Bearer ", "").trim();
+            }
+            final String token = authHeader;
+            
+            ctx.future(() -> caClient.exportEvents(reservations, contextCode, token)
+                                    .thenAccept(v -> ctx.status(201).result(
+                                        ">>> API SERVER STATUS: Export Successful\n" +
+                                        "\tSERVICE: Canvas\n" +
+                                        "\tCOUNT: " + reservations.size()
+                                    ))
+                                    .exceptionally(e -> {
+                                        Throwable cause = (e.getCause() != null) ? e.getCause() : e;
+
+                                        ctx.status(500).result(">>> API SERVER STATUS: Export Error\n" +
+                                                                    "\tSERVICE: TimeEdit\n" +
+                                                                    "\tMESSAGE: " + cause.getMessage()
+                                        );
+                                        return null;
+                                    })
+                            );
         });
     }
 }

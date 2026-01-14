@@ -45,6 +45,7 @@ public class WebClient implements GenericHttpClient {
                                          .uri(URI.create(url))
                                          .header("Authorization", "Bearer " + token)
                                          .header("Content-Type", "application/json")
+                                         .header("Accept", "application/json")
                                          .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                                          .build();
 

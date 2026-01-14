@@ -20,7 +20,9 @@ module com.github {
     exports com.github.controllers;
     exports com.github.models.entities;
     exports com.github.models.services;
+    exports com.github.api.controllers;
     exports com.github.api.dto;
+    exports com.github.api.services.integration;
     exports com.github.utilities;
     exports com.github.api;
     exports com.github.viewmodels.viewNavigation;

@@ -1,18 +1,28 @@
 package com.github.controllers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import com.github.models.entities.TimeEditReservation;
+import com.github.models.services.CanvasService;
 import com.github.models.services.ScheduleStore;
 import com.github.models.services.ScheduleTableBuilder;
+import com.github.models.services.TimEditService;
+import com.github.utilities.AltertWindowBuilder;
 import com.github.viewmodels.viewNavigation.ViewController;
 
 public class PrimaryController implements ViewController {
+
+    private final com.github.models.services.TimEditService timeEditService = new TimEditService();
+    private final com.github.models.services.CanvasService canvasService = new CanvasService();
 
     @FXML 
     private TableView<TimeEditReservation> resultsTable;
@@ -37,9 +47,41 @@ public class PrimaryController implements ViewController {
  
     @FXML
     void clickImport(ActionEvent event) {
-        String url = tfLinkTimeEdit.getText();
+        String input = tfLinkTimeEdit.getText();
 
-        ScheduleStore.getInstance().importFromUrl(url);
+        CompletableFuture<List<TimeEditReservation>> future;
+
+        if (input.isEmpty()) {
+            new AltertWindowBuilder.Builder(AlertType.WARNING, "Tomt sökfält!", "Sökfält är tomt")
+                                   .withHeader("Inga ord att söka med")
+                                   .build()
+                                   .show();
+        }
+
+        if (input.contains("http")) {
+            future = timeEditService.fetchFromApi(input);
+        } else {
+            future = timeEditService.getScheduleByCourse(input);
+        }
+        
+        future.thenAccept(list -> {
+               Platform.runLater(() -> {
+                    ScheduleStore.getInstance().getReservations().setAll(list);
+                    resultsTable.refresh();
+
+                    System.out.println(">>> UI STATUS SUCCESS: \n\tACTION: Import\n\tCOUNT: " + list.size());
+                    });
+               })
+               .exceptionally(ex -> {
+                    Platform.runLater(() -> {
+                        Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
+            
+                        System.err.println(">>> UI STATUS ERROR: Task Failed\n" +
+                                           "\tSOURCE: RestApiServer\n" +
+                                           "\tDETAIL: " + cause.getMessage());
+                    });
+                return null;
+               });
     }
 
     @FXML
@@ -69,7 +111,29 @@ public class PrimaryController implements ViewController {
 
     @FXML
     void clickTransfer(ActionEvent event) {
+        String hardcodedToken = "";
+        String targetUserId = "user_";
 
+        List<TimeEditReservation> toExport = ScheduleStore.getInstance().getSelectedReservationsToList();
+
+        canvasService.pushToCanvas(hardcodedToken, targetUserId, toExport)
+        .thenAccept(response -> {
+            Platform.runLater(() -> {
+                System.out.println(">>> UI STATUS SUCCESS: \n\tACTION: Transfer\n\tDETAIL: " + response);
+                
+                toExport.forEach(res -> res.setSelected(false));
+                resultsTable.refresh(); 
+            });
+        })
+        .exceptionally(ex -> {
+            Platform.runLater(() -> {
+                Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
+                System.err.println(">>> UI STATUS ERROR: Task Failed\n" +
+                                   "\tSOURCE: CanvasService\n" +
+                                   "\tDETAIL: " + cause.getMessage());
+            });
+            return null;
+        });
     }
 
     @Override
