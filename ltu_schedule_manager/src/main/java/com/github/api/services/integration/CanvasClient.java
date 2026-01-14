@@ -1,32 +1,50 @@
 package com.github.api.services.integration;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.api.dto.CanvasRawDTO;
+import com.github.api.services.mapping.CanvasMapper;
 import com.github.api.services.mapping.CanvasSchemas;
+import com.github.models.entities.TimeEditReservation;
 import com.github.utilities.WebClient;
 
 public class CanvasClient {
     
     private final WebClient webClient = WebClient.getInstance();
-    
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public CompletableFuture<String> pushEvent(String token, CanvasRawDTO eventData) {
-        try {
-            CanvasSchemas.ExportResponse body = new CanvasSchemas.ExportResponse(eventData);
-            
-            String jsonBody = mapper.writeValueAsString(body);
+    public CompletableFuture<Void> exportEvents(List<TimeEditReservation> reservations, String contextCode, String token) {
+            List<CompletableFuture<String>> futures = reservations.stream() 
+                                                                  .map(res -> mapToWrap(res, contextCode))
+                                                                  .map(json -> webClient.postAsync(EndPoint.CALENDAR.getValue(), token, json))
+                                                                  .toList();
+        
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+    }
 
-            return webClient.postAsync(EndPoint.CALENDAR.getValue(), token, jsonBody);
+    private String mapToWrap(TimeEditReservation res, String contextCode) {
+        try {
+            CanvasRawDTO rawDTO = CanvasMapper.toApiWrapper(
+                contextCode,
+                res.getActivity(),
+                res.getDisplayDate(),
+                res.getStartTime(), 
+                res.getEndTime(),
+                res.getLocation(),
+                res.getUserComment() 
+            );
+
+            return mapper.writeValueAsString(new CanvasSchemas.ExportResponse(rawDTO));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Conversion Failed\n\tSOURCE: Canvas Mapper\n\tITEM: " + 
+                                        res.getActivity() + "\n\tDETAIL: " + e.getMessage());
         }
     }
 
     private enum EndPoint {
-        CALENDAR("/calendar_events");
+        CALENDAR("calendar_events");
 
         private final String value;
         private final static String BASE_URL = "https://canvas.ltu.se/api/v1/";
