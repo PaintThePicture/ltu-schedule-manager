@@ -4,50 +4,43 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.api.services.mapping.TimeEditSchemas;
+import com.github.api.dto.TimeEditRawDTO;
+import com.github.api.services.mapping.TimeEditMapper;
 import com.github.models.entities.TimeEditReservation;
 import com.github.utilities.WebClient;
-
-record TimeEditResponse(List<TimeEditReservation> reservations) {}
 
 public class TimEditService {
     private final WebClient webClient = WebClient.getInstance();
     
-    private final ObjectMapper mapper = new ObjectMapper().configure(com.fasterxml.jackson
-                                                                        .databind.DeserializationFeature
-                                                                        .FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+    private final ObjectMapper mapper = new ObjectMapper();
+    
     public CompletableFuture<List<TimeEditReservation>> getScheduleByCourse(String courseId) {
-        String targetUrl = "http://localhost:7070/api/time-edit/courses/" + courseId + "/schedule";
+        String path = "http://localhost:7070/api/time-edit/courses/";
 
-        return fetch(targetUrl);
+        return WebClient.getInstance().getAsync(path + courseId + "/schedule")
+                                      .thenApply(this::processApiResponse);
     }
 
-    public CompletableFuture<List<TimeEditReservation>> getScheduleByUrl(String url) {
-        String encodedUrl = java.net.URLEncoder.encode(url, java.nio.charset.StandardCharsets.UTF_8);
-        String targetUrl = "http://localhost:7070/api/time-edit/course/schedule/fetch?url=" + encodedUrl;
-        
-        return fetch(targetUrl);
+    public CompletableFuture<List<TimeEditReservation>> fetchFromApi(String timeEditUrl) {
+        String path = "http://localhost:7070/api/time-edit/course/schedule/fetch?url=";
+
+        return WebClient.getInstance().getAsync(path + encodeUrl(timeEditUrl))
+                                      .thenApply(this::processApiResponse);
     }
 
-    private CompletableFuture<List<TimeEditReservation>> fetch(String path) {
-        return webClient.getAsync(path)
-                        .thenApply(json -> {
-                            try {
-                                return mapper.readValue(json, TimeEditSchemas.ExportResponse.class).reservations();
-                                
-                            } catch (Exception e) {
-                                throw new RuntimeException(">>> FRONTEND SCHEDULE SERVICE STATUS: mapping error\n" + 
-                                                            e.getMessage());
-                            }
-                        })
-                        .exceptionally(e -> {
-                            Throwable cause = (e.getCause() != null) ? e.getCause() : e;
-                
-                            System.err.println(">>> FRONTEND SCHEDULE SERVICE STATUS: API call failed\n\t" + 
-                                                cause.getMessage());
+    private List<TimeEditReservation> processApiResponse(String json) {
+        try {
+            List<TimeEditRawDTO> dtos = mapper.readValue(json, new com.fasterxml.jackson.core.type.TypeReference<>() {});
+            return dtos.stream().map(TimeEditMapper::toEntity).toList();
+        } catch (Exception e) {
+            System.err.println(">>> UI STATUS ERROR: Data Processing\n" +
+                               "\tSTAGE: JSON Mapping\n" +
+                               "\tMESSAGE: " + e.getMessage());
+            return List.of();
+        }
+    }
 
-                            return List.<TimeEditReservation>of();
-                        });
+    private static String encodeUrl(String rawUrl) {
+        return java.net.URLEncoder.encode(rawUrl, java.nio.charset.StandardCharsets.UTF_8);
     }
 }
