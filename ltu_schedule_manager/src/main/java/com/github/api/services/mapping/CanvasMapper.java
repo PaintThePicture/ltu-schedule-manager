@@ -1,10 +1,10 @@
 package com.github.api.services.mapping;
 
-import com.github.api.dto.canvas.CanvasRawDTO;
+import com.github.api.dto.CanvasRawDTO;
 
 public class CanvasMapper {
     
-    public static CanvasWrapper toApiWrapper(
+    public static CanvasRawDTO toApiWrapper(
         String contextCode, 
         String title, 
         String startIso, 
@@ -12,7 +12,7 @@ public class CanvasMapper {
         String location,
         String description) {
         
-        CanvasRawDTO raw = new CanvasRawDTO(
+        return new CanvasRawDTO(
             contextCode,
             title,
             startIso,
@@ -20,7 +20,5 @@ public class CanvasMapper {
             location,
             description  
         );
-
-        return new CanvasWrapper(raw);
     }
 }

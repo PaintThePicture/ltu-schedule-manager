@@ -2,7 +2,7 @@ package com.github.api.services.mapping;
 
 import java.util.List;
 
-import com.github.api.dto.timeedit.TimeEditRawDTO;
+import com.github.api.dto.TimeEditRawDTO;
 import com.github.models.entities.TimeEditReservation;
 import com.github.utilities.StringOps;
 
