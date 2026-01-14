@@ -6,8 +6,12 @@ import com.github.api.dto.TimeEditRawDTO;
 import com.github.models.entities.TimeEditReservation;
 import com.github.utilities.StringOps;
 
+/**
+ * Maps TimeEditRawDTO objects to TimeEditReservation entities.
+ */
 public class TimeEditMapper {
 
+    // Helper functional interface for safe list access
     private interface func {
         static String getValue(List<String> list, int index, String defaultValue) {
             return (index < list.size()) ? list.get(index) : defaultValue;
@@ -15,6 +19,12 @@ public class TimeEditMapper {
         
     }
     
+    /**
+     * Converts a TimeEditRawDTO to a TimeEditReservation entity.
+     *
+     * @param raw the TimeEditRawDTO object
+     * @return the mapped TimeEditReservation entity
+     */
     public static TimeEditReservation toEntity(TimeEditRawDTO raw) {
         
         TimeEditReservation res = new TimeEditReservation();

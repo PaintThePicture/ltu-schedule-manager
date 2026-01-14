@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.api.dto.TimeEditRawDTO;
 import com.github.models.entities.TimeEditReservation;
 
+/**
+ * Defines schema records for TimeEdit API responses.
+ */
 public interface TimeEditSchemas {
     @JsonIgnoreProperties(ignoreUnknown = true)
     record rawResponse(
