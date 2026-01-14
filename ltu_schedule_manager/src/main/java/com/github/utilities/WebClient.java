@@ -8,9 +8,10 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 interface GenericHttpClient {
+    
     CompletableFuture<String> getAsync(String url);
     CompletableFuture<String> postAsync(String url, String token, String jsonBody);
-
+    
 
     default CompletableFuture<String> sendAsync(HttpClient httpClient, HttpRequest request) {
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
@@ -21,10 +22,10 @@ interface GenericHttpClient {
                                                     return response.body();
                                                     });
     }
-    
 }
 
 public class WebClient implements GenericHttpClient {
+    
     private static final WebClient INSTANCE = new WebClient();
     private final HttpClient httpClient;
     
