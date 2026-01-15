@@ -19,32 +19,47 @@ import com.github.models.services.TimEditService;
 import com.github.utilities.AltertWindowBuilder;
 import com.github.viewmodels.viewNavigation.ViewController;
 
+/**
+ * Controller for the main schedule view.
+ */
 public class PrimaryController implements ViewController {
-
+    /** Service for fetching reservations from TimeEdit. */
     private final com.github.models.services.TimEditService timeEditService = new TimEditService();
+    /** Service for pushing reservations to Canvas. */
     private final com.github.models.services.CanvasService canvasService = new CanvasService();
 
+    /** Table showing imported reservations. */
     @FXML 
     private TableView<TimeEditReservation> resultsTable;
+     /** Selection column. */
     @FXML
     private TableColumn<TimeEditReservation, Boolean> colSelect;
+    /** Date column. */
     @FXML
     private TableColumn<TimeEditReservation, String> colDate;
+    /** Time column. */
     @FXML
     private TableColumn<TimeEditReservation, String> colTime;
+    /** Activity column. */
     @FXML
     private TableColumn<TimeEditReservation, String> colActivity;
+    /** Location column. */
     @FXML
     private TableColumn<TimeEditReservation, String> colLocation;
+    /** Course code column. */
     @FXML
     private TableColumn<TimeEditReservation, String> colCourseCode;
+    /** Comment column. */   
     @FXML
     private TableColumn<TimeEditReservation, String> colComment;
+    /** Search input for TimeEdit URL or course code. */
     @FXML
     private TextField tfLinkTimeEdit;
+    /** Comment text applied to selected reservations. */
     @FXML
     private TextField tfComment;
- 
+    
+    /** Imports reservations from TimeEdit based on the search input. */
     @FXML
     void clickImport(ActionEvent event) {
         String input = tfLinkTimeEdit.getText();
@@ -83,21 +98,22 @@ public class PrimaryController implements ViewController {
                 return null;
                });
     }
-
+    
+    /** Selects all reservations in the table. */
     @FXML
     void clickSelectAll(ActionEvent event) {
         ScheduleStore.getInstance().getReservations().forEach(r -> r.setSelected(true));
         
         resultsTable.refresh();
     }
-
+    /** Deselects all reservations in the table. */
     @FXML
     void clickSelectNone(ActionEvent event) {
         ScheduleStore.getInstance().getReservations().forEach(r -> r.setSelected(false));
         
         resultsTable.refresh();
     }
-
+    /** Applies the comment field to all selected reservations. */
     @FXML
     void clickSetComment(ActionEvent event) {
         String comment = tfComment.getText();
@@ -108,7 +124,7 @@ public class PrimaryController implements ViewController {
 
         resultsTable.refresh();
     }
-
+    /** Transfers selected reservations to Canvas. */
     @FXML
     void clickTransfer(ActionEvent event) {
         String hardcodedToken = "";
@@ -135,7 +151,7 @@ public class PrimaryController implements ViewController {
             return null;
         });
     }
-
+    /** Initializes the schedule table and column bindings after FXML loading. */
     @Override
     public void initialize() {
         new ScheduleTableBuilder.Builder(resultsTable, colSelect, colDate, colTime)
@@ -147,7 +163,7 @@ public class PrimaryController implements ViewController {
 
         resultsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
     }
-
+    /** Called when the view is unloaded. */
     @Override
     public void onUnload() {
 
