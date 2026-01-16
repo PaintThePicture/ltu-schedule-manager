@@ -12,11 +12,13 @@ import com.github.models.entities.TimeEditReservation;
  */
 public interface TimeEditSchemas {
     @JsonIgnoreProperties(ignoreUnknown = true)
+    // Schema for TimeEdit API response containing reservations
     record rawResponse(
     @JsonProperty("reservations") List<TimeEditRawDTO> reservations
     ) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    // Schema for TimeEdit API response containing reservations as entities
     record ExportResponse(
         @JsonProperty("reservations") List<TimeEditReservation> reservations
     ) {}

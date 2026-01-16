@@ -37,6 +37,7 @@ public class TimeEditMapper {
         
         String rawData = func.getValue(cols, 2, "N/A");
         
+        // Extract course code from rawData
         res.setCourseCode(StringOps.UtilSplit.commaAsStream(rawData)
                                              .findFirst()
                                              .orElse("N/A"));
