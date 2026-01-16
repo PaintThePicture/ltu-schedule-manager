@@ -64,9 +64,10 @@ public class PrimaryController implements ViewController {
     @FXML
     void clickImport(ActionEvent event) {
         String input = tfLinkTimeEdit.getText();
-
+        
         CompletableFuture<List<TimeEditReservation>> future;
 
+        // Warn if input is empty
         if (input.isEmpty()) {
             new AltertWindowBuilder.Builder(AlertType.WARNING, "Tomt sökfält!", "Sökfält är tomt")
                                    .withHeader("Inga ord att söka med")
@@ -74,27 +75,44 @@ public class PrimaryController implements ViewController {
                                    .show();
         }
 
+        // Determine if input is a URL or course code
         if (input.contains("http")) {
             future = timeEditService.fetchFromApi(input);
         } else {
             future = timeEditService.getScheduleByCourse(input);
         }
-        
+
+        // Update UI upon completion
         future.thenAccept(list -> {
                Platform.runLater(() -> {
-                    ScheduleStore.getInstance().getReservations().setAll(list);
-                    resultsTable.refresh();
+                    if (!list.isEmpty()) {
+                        new AltertWindowBuilder.Builder(AlertType.INFORMATION, "Import lyckades", 
+                                               "Importen från TimeEdit lyckades med " + list.size() + " bokningar.")
+                                               .withHeader("Import slutförd")
+                                               .build()
+                                               .show();
 
-                    System.out.println(">>> UI STATUS SUCCESS: \n\tACTION: Import\n\tCOUNT: " + list.size());
-                    });
-               })
-               .exceptionally(ex -> {
-                    Platform.runLater(() -> {
-                        Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
+                        System.out.println(">>> UI STATUS INFO: \n\tACTION: Import\n\tDETAIL: " + list.size() + " reservations imported");
+                    } else {
+
+
+                        new AltertWindowBuilder.Builder(AlertType.INFORMATION, "Inga resultat", "Inga bokningar hittades.")
+                                               .withHeader("Import slutförd")
+                                               .build()
+                                               .show();
+
+                        System.out.println(">>> UI STATUS INFO: \n\tACTION: Import\n\tDETAIL: No reservations found");
+                    }
+                        ScheduleStore.getInstance().getReservations().setAll(list);
+                        resultsTable.refresh();
+                    });})
+                    .exceptionally(ex -> {
+                        Platform.runLater(() -> {
+                            Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
             
-                        System.err.println(">>> UI STATUS ERROR: Task Failed\n" +
-                                           "\tSOURCE: RestApiServer\n" +
-                                           "\tDETAIL: " + cause.getMessage());
+                            System.err.println(">>> UI STATUS ERROR: Task Failed\n" +
+                                               "\tSOURCE: RestApiServer\n" +
+                                               "\tDETAIL: " + cause.getMessage());
                     });
                 return null;
                });
@@ -140,7 +158,21 @@ public class PrimaryController implements ViewController {
                      })
                      .thenAccept(response -> {
                         Platform.runLater(() -> {
-                            System.out.println(">>> UI STATUS SUCCESS: \n\tACTION: Transfer\n\tDETAIL: " + response);
+                            if (response.startsWith("FAILED:")) {
+                                new AltertWindowBuilder.Builder(AlertType.ERROR, "Serverfel", response)
+                                                       .withHeader("Kunde inte exportera")
+                                                       .build()
+                                                       .show();
+
+                                    System.err.println(">>> UI STATUS INFO: \n\tACTION: Transfer\n\tDETAIL: " + response);
+                            } else {
+                                new AltertWindowBuilder.Builder(AlertType.INFORMATION, "Export lyckades", "Överföringen till Canvas lyckades.")
+                                                       .withHeader("Export slutförd")
+                                                       .build()
+                                                       .show();
+                                    
+                                    System.out.println(">>> UI STATUS INFO: \n\tACTION: Transfer\n\tDETAIL: " + response);
+                            }
                             
                             toExport.forEach(res -> res.setSelected(false));
                             resultsTable.refresh(); 
@@ -150,8 +182,17 @@ public class PrimaryController implements ViewController {
                         Platform.runLater(() -> {
                             Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
                             System.err.println(">>> UI STATUS ERROR: Task Failed\n" +
-                                            "\tSOURCE: CanvasService\n" +
-                                            "\tDETAIL: " + cause.getMessage());
+                                               "\tSOURCE: CanvasService\n" +
+                                               "\tDETAIL: " + cause.getMessage());
+
+                            new AltertWindowBuilder.Builder(
+                                                    AlertType.ERROR, 
+                                                    "Export misslyckades", 
+                                                    "Ett fel uppstod vid överföringen till Canvas.")
+                                                   .withHeader("Kunde inte slutföra exporten")
+                                                   .withException(cause) // Detta lägger till din TextArea med stacktracen
+                                                   .build()
+                                                   .show();
                         });
                         return null;
                      });
