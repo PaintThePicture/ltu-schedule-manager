@@ -6,7 +6,7 @@ import com.github.api.dto.CanvasRawDTO;
  * Maps input parameters to CanvasRawDTO objects.
  */
 public class CanvasMapper {
-    
+    // Maps input parameters to a CanvasRawDTO
     public static CanvasRawDTO toApiWrapper(
         String contextCode, 
         String title, 
@@ -34,7 +34,7 @@ public class CanvasMapper {
         }
         return date + "T" + time + ":00Z";
     }
-
+    // Helper method to format the description with course code
     private static String formatDescription(String courseCode, String description) {
         return "Kurskod: " + courseCode + " | " + description;
     }

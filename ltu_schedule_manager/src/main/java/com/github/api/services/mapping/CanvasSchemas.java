@@ -8,7 +8,7 @@ import com.github.api.dto.CanvasRawDTO;
  * Defines schema records for Canvas API responses.
  */
 public interface CanvasSchemas {
-
+    // Schema for exporting a calendar event to Canvas
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ExportResponse(
         @JsonProperty("calendar_event") CanvasRawDTO calendarEvent
