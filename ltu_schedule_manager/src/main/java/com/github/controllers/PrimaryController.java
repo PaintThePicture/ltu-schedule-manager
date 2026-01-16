@@ -11,6 +11,7 @@ import javafx.scene.control.Alert.AlertType;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import com.github.models.entities.CanvasAuthorization;
 import com.github.models.entities.TimeEditReservation;
 import com.github.models.services.CanvasService;
 import com.github.models.services.ScheduleStore;
@@ -127,29 +128,33 @@ public class PrimaryController implements ViewController {
     /** Transfers selected reservations to Canvas. */
     @FXML
     void clickTransfer(ActionEvent event) {
-        String hardcodedToken = "";
-        String targetUserId = "user_";
 
         List<TimeEditReservation> toExport = ScheduleStore.getInstance().getSelectedReservationsToList();
 
-        canvasService.pushToCanvas(hardcodedToken, targetUserId, toExport)
-        .thenAccept(response -> {
-            Platform.runLater(() -> {
-                System.out.println(">>> UI STATUS SUCCESS: \n\tACTION: Transfer\n\tDETAIL: " + response);
-                
-                toExport.forEach(res -> res.setSelected(false));
-                resultsTable.refresh(); 
-            });
-        })
-        .exceptionally(ex -> {
-            Platform.runLater(() -> {
-                Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
-                System.err.println(">>> UI STATUS ERROR: Task Failed\n" +
-                                   "\tSOURCE: CanvasService\n" +
-                                   "\tDETAIL: " + cause.getMessage());
-            });
-            return null;
-        });
+        CanvasAuthorization auth = new CanvasAuthorization("", "");
+        
+        canvasService.pushToCanvas(auth, toExport)
+                     .whenComplete((response, ex) -> {
+                        auth.wipe(); 
+                        System.out.println(">>> Security: Token wiped from memory");
+                     })
+                     .thenAccept(response -> {
+                        Platform.runLater(() -> {
+                            System.out.println(">>> UI STATUS SUCCESS: \n\tACTION: Transfer\n\tDETAIL: " + response);
+                            
+                            toExport.forEach(res -> res.setSelected(false));
+                            resultsTable.refresh(); 
+                        });
+                     })
+                     .exceptionally(ex -> {
+                        Platform.runLater(() -> {
+                            Throwable cause = (ex.getCause() != null) ? ex.getCause() : ex;
+                            System.err.println(">>> UI STATUS ERROR: Task Failed\n" +
+                                            "\tSOURCE: CanvasService\n" +
+                                            "\tDETAIL: " + cause.getMessage());
+                        });
+                        return null;
+                     });
     }
     /** Initializes the schedule table and column bindings after FXML loading. */
     @Override

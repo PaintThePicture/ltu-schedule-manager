@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.models.entities.CanvasAuthorization;
 import com.github.models.entities.TimeEditReservation;
 import com.github.utilities.WebClient;
 
@@ -13,14 +14,14 @@ public class CanvasService {
 
        private final ObjectMapper mapper = new ObjectMapper();
 
-    public CompletableFuture<String> pushToCanvas(String token, String userId, List<TimeEditReservation> reservations) {
+    public CompletableFuture<String> pushToCanvas(CanvasAuthorization auth, List<TimeEditReservation> reservations) {
         String path = "http://localhost:7070/api/canvas/events/export?contextCode=";
 
-        path = path + userId;
+        path = path + auth.getUserId();
 
         try {
             String jsonBody = mapper.writeValueAsString(reservations);
-            return push(path, token, jsonBody);
+            return push(path, auth.getExposedToken(), jsonBody);
 
         } catch (JsonProcessingException e) {
             return CompletableFuture.completedFuture(">>> FRONTEND CANVAS SERVICE STATUS: Mapping error\n" + 
