@@ -33,6 +33,7 @@ public class CanvasClient {
                 res.getStartTime(), 
                 res.getEndTime(),
                 res.getLocation(),
+                res.getCourseCode(),
                 res.getUserComment() 
             );
 

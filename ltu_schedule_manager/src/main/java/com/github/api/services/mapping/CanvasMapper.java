@@ -14,6 +14,7 @@ public class CanvasMapper {
         String startTime, 
         String endTime,
         String location,
+        String courseCode,
         String description) {
         
         return new CanvasRawDTO(
@@ -22,7 +23,7 @@ public class CanvasMapper {
             formatToIso(displayDate, startTime),
             formatToIso(displayDate, endTime),
             location,
-            description  
+            formatDescription(courseCode, description)  
         );
     }
 
@@ -32,5 +33,9 @@ public class CanvasMapper {
             return null;
         }
         return date + "T" + time + ":00Z";
+    }
+
+    private static String formatDescription(String courseCode, String description) {
+        return "Kurskod: " + courseCode + " | " + description;
     }
 }
