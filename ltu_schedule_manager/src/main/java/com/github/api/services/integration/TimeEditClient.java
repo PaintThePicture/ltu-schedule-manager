@@ -47,7 +47,7 @@ public class TimeEditClient {
 
     private enum EndPoint {
         SEARCH("objects.json?fr=f&part=t&sid=3&types=28&search_text="),
-        SCHEDULE("s.json?sid=3&p=-20.w,12.w&objects=");
+        SCHEDULE("s.json?sid=3&p=-26.w,52.w&objects=");
 
         private final String value;
         private final static String BASE_URL = "https://cloud.timeedit.net/ltu/web/schedule1/";
