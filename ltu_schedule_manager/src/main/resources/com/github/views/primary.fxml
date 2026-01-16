@@ -32,7 +32,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label styleClass="font-headline3" text="Länk från TimeEdit">
+            <Label styleClass="font-headline3" text="Kurskod, eller Länk från TimeEdit">
                <padding>
                   <Insets bottom="4.0" />
                </padding>
