@@ -15,16 +15,31 @@ public class CanvasClient {
     private final WebClient webClient = WebClient.getInstance();
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * Exports a list of TimeEditReservation events to Canvas calendar.
+     * @param reservations
+     * @param contextCode
+     * @param token
+     * @return
+     */
     public CompletableFuture<Void> exportEvents(List<TimeEditReservation> reservations, String contextCode, String token) {
-            List<CompletableFuture<String>> futures = reservations.stream() 
-                                                                  .map(res -> mapToWrap(res, contextCode))
-                                                                  .map(json -> webClient.postAsync(EndPoint.CALENDAR.getValue(), token, json))
-                                                                  .toList();
         
+        // Map each reservation to a JSON string and then asynchronously post it
+        List<CompletableFuture<String>> futures = reservations.stream() 
+                                                              .map(res -> mapToWrap(res, contextCode))
+                                                              .map(json -> webClient.postAsync(EndPoint.CALENDAR.getValue(), token, json))
+                                                              .toList();
+        // Combine all futures into one
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
-
+    /**
+     * Maps a TimeEditReservation to a JSON string for Canvas API.
+     * @param res
+     * @param contextCode
+     * @return
+     */
     private String mapToWrap(TimeEditReservation res, String contextCode) {
+        // Convert TimeEditReservation to CanvasRawDTO using CanvasMapper
         try {
             CanvasRawDTO rawDTO = CanvasMapper.toApiWrapper(
                 contextCode,
@@ -36,14 +51,14 @@ public class CanvasClient {
                 res.getCourseCode(),
                 res.getUserComment() 
             );
-
+            // Wrap the DTO in the expected CanvasSchemas.ExportResponse structure
             return mapper.writeValueAsString(new CanvasSchemas.ExportResponse(rawDTO));
         } catch (Exception e) {
             throw new RuntimeException("Conversion Failed\n\tSOURCE: Canvas Mapper\n\tITEM: " + 
                                         res.getActivity() + "\n\tDETAIL: " + e.getMessage());
         }
     }
-
+    // EndPoint enum for Canvas API endpoints  
     private enum EndPoint {
         CALENDAR("calendar_events");
 

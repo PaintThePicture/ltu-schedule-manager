@@ -14,27 +14,40 @@ public class TimeEditClient {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * Fetches and cleans TimeEditRawDTO list from the given URL.
+     * @param url
+     * @return
+     */
     public CompletableFuture<List<TimeEditRawDTO>> fetchCleanedDto(String url) {
-    return webClient.getAsync(url).thenApply(json -> {
-            try {
-                TimeEditSchemas.rawResponse wrapper = mapper.readValue(json, TimeEditSchemas
-                                                            .rawResponse.class);
-                
-                return wrapper.reservations() != null ? wrapper.reservations() : List.of();
-            } catch (Exception e) {
-                throw new RuntimeException("Mapping Failed\n\tSOURCE: TimeEdit API\n\tDETAIL: " + 
-                                            e.getMessage());
-            }
-        });
+        // Fetch raw JSON from the API
+        return webClient.getAsync(url).thenApply(json -> {
+                try {
+                    TimeEditSchemas.rawResponse wrapper = mapper.readValue(json, TimeEditSchemas
+                                                                .rawResponse.class);
+                    // Return the list of reservations or an empty list if null
+                    return wrapper.reservations() != null ? wrapper.reservations() : List.of();
+                } catch (Exception e) {
+                    throw new RuntimeException("Mapping Failed\n\tSOURCE: TimeEdit API\n\tDETAIL: " + 
+                                                e.getMessage());
+                }
+            });
     }
-
+    /**
+     * Searches for the internal ID of a course and fetches its schedule.
+     * @param courseId
+     * @return
+     */
     public CompletableFuture<List<TimeEditRawDTO>>  searchAndGetSchedule(String courseId) {
+        // First fetch the internal ID, then fetch the schedule using that ID
         return fetchInternalId(courseId).thenCompose(id -> id.isEmpty()
                                        ? CompletableFuture.completedFuture(List.<TimeEditRawDTO>of())
                                        : fetchCleanedDto(EndPoint.SCHEDULE.getValue() + id));
     }
 
+    // Fetches the internal ID for a given course ID
     private CompletableFuture<String> fetchInternalId(String courseId) {
+        // Make an asynchronous GET request to search for the course
         return webClient.getAsync(EndPoint.SEARCH.getValue() + courseId) 
                         .thenApply(json -> {
                             try {
@@ -44,7 +57,7 @@ public class TimeEditClient {
                             }
                         });
     }
-
+    // EndPoint enum for TimeEdit API endpoints
     private enum EndPoint {
         SEARCH("objects.json?fr=f&part=t&sid=3&types=28&search_text="),
         SCHEDULE("s.json?sid=3&p=-26.w,52.w&objects=");
