@@ -8,6 +8,9 @@ import com.github.api.controllers.TimeEditCtrl;
 
 import io.javalin.Javalin;
 
+/**
+ * Singleton class to manage the REST API server using Javalin.
+ */
 public class RestApiServer {
     private static final RestApiServer instance = new RestApiServer();
     
@@ -15,6 +18,9 @@ public class RestApiServer {
     private Thread serverThread;
     private final int port = 7070;
     
+    /**
+     * Starts the REST API server in a separate thread.
+     */
     public void run() {
         System.out.println(">>> API SERVER STATUS: API is initializing ");
 
@@ -34,7 +40,9 @@ public class RestApiServer {
             start();
         });
     }
-
+    /**
+     * Stops the REST API server if it is running.
+     */
     public void stop() {
         // IF server thread active, shutsdown api server
         Optional.ofNullable(serverThread).ifPresent(st -> {
@@ -64,7 +72,7 @@ public class RestApiServer {
     public static RestApiServer getInstance() {
         return instance;
     }
-
+    // Configures Javalin server
     private void configureJavalin() {
         // Configure Javalin
         app = Javalin.create(conf -> {
@@ -73,7 +81,7 @@ public class RestApiServer {
 
         System.out.println(">>> API SERVER STATUS: API server CONFIGURED");
     }
-
+    // Configures API routes
     private void configureRoutes() {
 
         List<RestApiRoutable> routes = List.of(
@@ -90,7 +98,7 @@ public class RestApiServer {
             System.out.println("\t" + route.getClass().getSimpleName());
         });
     }
-
+    // Starts the server thread
     private void start() {
         serverThread.setDaemon(true);
         serverThread.start();
